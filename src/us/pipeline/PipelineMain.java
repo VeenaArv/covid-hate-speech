@@ -17,6 +17,9 @@ public class PipelineMain {
         FileOutputFormat.setOutputPath(job, new Path(OUTPUT_FILE_PATH));
 
         job.setMapperClass(JsonToTweetMapper.class);
+        job.setMapOutputKeyClass(TweetWritable.class);
+        job.setMapOutputValueClass(TweetWritable.class);
+        job.setReducerClass(RemoveDuplicatesReducer.class);
         job.setOutputKeyClass(CreatedAtWritable.class);
         job.setOutputValueClass(TweetWritable.class);
         System.exit(job.waitForCompletion(true) ? 0 : 1);

@@ -9,7 +9,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 
-public class JsonToTweetMapper extends Mapper<LongWritable, Text, CreatedAtWritable, TweetWritable> {
+public class JsonToTweetMapper extends Mapper<LongWritable, Text, TweetWritable, TweetWritable> {
     public static final Log log = LogFactory.getLog(JsonToTweetMapper.class);
 
     @Override
@@ -17,11 +17,10 @@ public class JsonToTweetMapper extends Mapper<LongWritable, Text, CreatedAtWrita
             throws IOException, InterruptedException {
         try {
             TweetWritable tweet = PipelineUtils.parseJSONObjectFromString(value.toString());
-            CreatedAtWritable createdAt = new CreatedAtWritable(tweet.createdAt);
             context.getCounter(PipelineUtils.Counters.NUM_TWEETS_PROCESSED).increment(1);
             if (tweet.isEligibleForAnalysis) {
-                context.write(createdAt, tweet);
-                context.getCounter(PipelineUtils.Counters.NUM_TWEETS_ELIGIBLE_FOR_ANALYSIS).increment(1);
+                context.write(tweet, tweet);
+                context.getCounter(PipelineUtils.Counters.NUM_OUTPUTS_JSON_TO_TWEET_MAPPER).increment(1);
             }
 
         } catch (ParseException e) {

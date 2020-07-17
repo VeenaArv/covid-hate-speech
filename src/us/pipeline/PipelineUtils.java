@@ -2,7 +2,6 @@ package us.pipeline;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -32,11 +31,13 @@ class CreatedAtWritable implements WritableComparable<CreatedAtWritable> {
         // ex. "created_at": "Wed Oct 10 20:19:24 +0000 2018"
         String[] splitDate = createdAt.split(" ");
         int year = Integer.parseInt(splitDate[splitDate.length - 1]);
-        int month = MONTH_CODE_TO_INT.indexOf(splitDate[1]) + 1;
+        // Java months are zero based.
+        int month = MONTH_CODE_TO_INT.indexOf(splitDate[1]);
         int day = Integer.parseInt(splitDate[2]);
         Calendar calendar = Calendar.getInstance();
-        // TODO(veenaarv) fix month desired parameter syntax issue
-        calendar.set(year, month, day);
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
         return calendar;
     }
 
@@ -56,11 +57,11 @@ class CreatedAtWritable implements WritableComparable<CreatedAtWritable> {
     }
 }
 
-class TweetWritable implements Writable {
+class TweetWritable implements WritableComparable<TweetWritable> {
     public static final Log log = LogFactory.getLog(TweetWritable.class);
     // Attributes from twitter API.
     Long tweetId;
-    String raw_text;
+    String rawText;
     String hashtags;
     String countryCode;
     String createdAt;
@@ -69,9 +70,9 @@ class TweetWritable implements Writable {
     boolean isEligibleForAnalysis;
     String preprocessedText;
 
-    public TweetWritable(Long tweetId, String raw_text, String hashtags, String countryCode, String createdAt, Boolean isTruncated) {
+    public TweetWritable(Long tweetId, String rawText, String hashtags, String countryCode, String createdAt, Boolean isTruncated) {
         this.tweetId = tweetId;
-        this.raw_text = raw_text;
+        this.rawText = rawText;
         this.hashtags = hashtags;
         this.countryCode = countryCode;
         this.createdAt = createdAt;
@@ -107,33 +108,39 @@ class TweetWritable implements Writable {
     @Override
     public void write(DataOutput out) throws IOException {
         out.writeLong(tweetId);
-        out.writeChars(raw_text);
-        out.writeChars(hashtags);
-        out.writeChars(countryCode);
-        out.writeChars(createdAt);
+        out.writeUTF(rawText);
+        out.writeUTF(hashtags);
+        out.writeUTF(countryCode);
+        out.writeUTF(createdAt);
         out.writeBoolean(isTruncated);
         out.writeBoolean(isEligibleForAnalysis);
-        out.writeChars(preprocessedText);
+        out.writeUTF(preprocessedText);
 
     }
 
     @Override
     public void readFields(DataInput in) throws IOException {
         tweetId = in.readLong();
-        raw_text = in.readLine();
-        hashtags = in.readLine();
-        countryCode = in.readLine();
-        createdAt = in.readLine();
+        rawText = in.readUTF();
+        hashtags = in.readUTF();
+        countryCode = in.readUTF();
+        createdAt = in.readUTF();
         isTruncated = in.readBoolean();
         isEligibleForAnalysis = in.readBoolean();
-        preprocessedText = in.readLine();
+        preprocessedText = in.readUTF();
+    }
+
+    @Override
+    // Only used to find duplicates. Sorting by tweetId has no meaningful value.
+    public int compareTo(TweetWritable o) {
+        return this.tweetId.compareTo(o.tweetId);
     }
 
     /**
      * Sets `isEligibleForAnalysis` field that filters tweets that are eligible for sentiment analysis.
      */
     private boolean isEligibleForAnalysis() {
-        return tweetId != null && raw_text != null && hashtags != null && countryCode != null && createdAt != null
+        return tweetId != null && rawText != null && hashtags != null && countryCode != null && createdAt != null
                 && isTruncated != null && !isTruncated && countryCode.equals("US");
     }
 
@@ -142,7 +149,7 @@ class TweetWritable implements Writable {
      * lowercase, removing punctuation, replacing all whitespaces with a space, and removing stop words.
      */
     private String preprocessTextForNLP() {
-        return removeStopwords(raw_text.toLowerCase()
+        return removeStopwords(rawText.toLowerCase()
                 .replaceAll("\\p{Punct}", "")
                 .replaceAll("\\s+", " "));
     }
@@ -172,7 +179,7 @@ public class PipelineUtils {
         Scanner sc = new Scanner(new File("data/sample.jsonl"));
         String jsonString = sc.nextLine();
         TweetWritable tweet = parseJSONObjectFromString(jsonString);
-        System.out.println(tweet.raw_text);
+        System.out.println(tweet.rawText);
 
     }
 

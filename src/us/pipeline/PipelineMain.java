@@ -6,8 +6,8 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class PipelineMain {
-    static final String INPUT_FILE_PATH = "covid/data/sample/sample.jsonl";
-    static final String OUTPUT_FILE_PATH = "covid/out/sample";
+    static final String INPUT_FILE_PATH = "covid/data/coronavirus-through-09-June-2020-00.jsonl";
+    static final String OUTPUT_FILE_PATH = "covid/out/";
 
     public static void main(String[] args) throws Exception {
         Job job = Job.getInstance();

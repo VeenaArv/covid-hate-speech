@@ -9,10 +9,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Scanner;
+import java.util.*;
 
 class CreatedAtWritable implements WritableComparable<CreatedAtWritable> {
     // UTC time when tweet was created from twitter api's created_at json field
@@ -61,56 +58,95 @@ class CreatedAtWritable implements WritableComparable<CreatedAtWritable> {
 
 class TweetWritable implements Writable {
     public static final Log log = LogFactory.getLog(TweetWritable.class);
+    // Attributes from twitter API.
     Long tweetId;
-    String text;
+    String raw_text;
     String hashtags;
     String countryCode;
     String createdAt;
     Boolean isTruncated;
+    // Calculations.
     boolean isEligibleForAnalysis;
+    String preprocessedText;
 
-    TweetWritable() {/*Default constructor for serialization. Do not instantiate.*/}
-
-    public TweetWritable(Long tweetId, String text, String hashtags, String countryCode, String createdAt, Boolean isTruncated) {
+    public TweetWritable(Long tweetId, String raw_text, String hashtags, String countryCode, String createdAt, Boolean isTruncated) {
         this.tweetId = tweetId;
-        this.text = text;
+        this.raw_text = raw_text;
         this.hashtags = hashtags;
         this.countryCode = countryCode;
         this.createdAt = createdAt;
         this.isTruncated = isTruncated;
         isEligibleForAnalysis = isEligibleForAnalysis();
+        preprocessedText = preprocessTextForNLP();
+    }
+
+    TweetWritable() {/*Default constructor for serialization. Do not instantiate.*/}
+
+    /**
+     * @param text must be lowercased and stripped of punctutation and extra whitespace.
+     * @return text with stopwords removed.
+     */
+    private static String removeStopwords(String text) {
+        String[] STOPWORDS_ARR = {"a", "an", "and", "are", "as", "at", "be", "but", "by",
+                "for", "if", "in", "into", "is", "it",
+                "no", "not", "of", "on", "or", "such",
+                "that", "the", "their", "then", "there", "these",
+                "they", "this", "to", "was", "will", "with"};
+
+        HashSet<String> stopwords = new HashSet<>(Arrays.asList(STOPWORDS_ARR));
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String word : text.split(" ")) {
+            if (!stopwords.contains(word)) {
+                stringBuilder.append(word).append(" ");
+            }
+        }
+        // removes trailing whitespace.
+        return stringBuilder.toString().trim();
     }
 
     @Override
     public void write(DataOutput out) throws IOException {
         out.writeLong(tweetId);
-        out.writeChars(text);
+        out.writeChars(raw_text);
         out.writeChars(hashtags);
         out.writeChars(countryCode);
         out.writeChars(createdAt);
         out.writeBoolean(isTruncated);
         out.writeBoolean(isEligibleForAnalysis);
+        out.writeChars(preprocessedText);
 
     }
 
     @Override
     public void readFields(DataInput in) throws IOException {
         tweetId = in.readLong();
-        text = in.readLine();
+        raw_text = in.readLine();
         hashtags = in.readLine();
         countryCode = in.readLine();
         createdAt = in.readLine();
         isTruncated = in.readBoolean();
         isEligibleForAnalysis = in.readBoolean();
+        preprocessedText = in.readLine();
     }
 
     /**
      * Sets `isEligibleForAnalysis` field that filters tweets that are eligible for sentiment analysis.
      */
     private boolean isEligibleForAnalysis() {
-        return tweetId != null && text != null && hashtags != null && countryCode != null && createdAt != null
+        return tweetId != null && raw_text != null && hashtags != null && countryCode != null && createdAt != null
                 && isTruncated != null && !isTruncated && countryCode.equals("US");
     }
+
+    /**
+     * Preprocesses text for sentiment analysis and hate speech detection. Steps include making characters all
+     * lowercase, removing punctuation, replacing all whitespaces with a space, and removing stop words.
+     */
+    private String preprocessTextForNLP() {
+        return removeStopwords(raw_text.toLowerCase()
+                .replaceAll("\\p{Punct}", "")
+                .replaceAll("\\s+", " "));
+    }
+
 }
 
 public class PipelineUtils {
@@ -125,7 +161,6 @@ public class PipelineUtils {
         // System.out.println(jsonObject.toJSONString());
         JSONObject entitiesJsonObject = (JSONObject) jsonObject.get("entities");
         JSONObject placeJsonObject = (JSONObject) jsonObject.get("place");
-        // TODO(veenaarv) parse hashtags as an array
         String hashtags = entitiesJsonObject == null || entitiesJsonObject.get("hashtags") == null
                 ? null : entitiesJsonObject.get("hashtags").toString();
         String place = placeJsonObject == null ? null : placeJsonObject.get("country_code").toString();
@@ -137,7 +172,7 @@ public class PipelineUtils {
         Scanner sc = new Scanner(new File("data/sample.jsonl"));
         String jsonString = sc.nextLine();
         TweetWritable tweet = parseJSONObjectFromString(jsonString);
-        System.out.println(tweet.text);
+        System.out.println(tweet.raw_text);
 
     }
 

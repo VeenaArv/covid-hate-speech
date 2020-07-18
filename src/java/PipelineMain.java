@@ -1,9 +1,12 @@
-package us.pipeline;
+package java;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+import java.writable.CreatedAtWritable;
+import java.writable.TweetWritable;
 
 public class PipelineMain {
     static final String INPUT_FILE_PATH = "covid/data/coronavirus-through-09-June-2020-00.jsonl";

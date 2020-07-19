@@ -18,7 +18,7 @@ public class JsonToTweetMapper extends Mapper<LongWritable, Text, TweetWritable,
     public void map(LongWritable key, Text value, Context context)
             throws IOException, InterruptedException {
         try {
-            TweetWritable tweet = PipelineUtils.parseJSONObjectFromString(value.toString());
+            TweetWritable tweet = PipelineUtils.parseJSONTweetObjectFromString(value.toString());
             context.getCounter(PipelineCounters.Preprocessing.NUM_TWEETS_PROCESSED).increment(1);
             if (tweet.isEligibleForAnalysis) {
                 context.write(tweet, tweet);

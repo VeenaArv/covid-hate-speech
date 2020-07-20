@@ -4,15 +4,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.writable.CovidGovernmentResponseWritable;
 import java.writable.PoliciesWritable;
 import java.writable.TweetWritable;
 
 
 public class PipelineUtils {
+
     /**
      * @param jsonString representing a single tweet
      * @return parsed String as a tweet
@@ -66,18 +65,17 @@ public class PipelineUtils {
                 .setWildardPolicies(columns[29]).build();
         return
                 new CovidGovernmentResponseWritable()
-                .setCountryCode(columns[1])
-                .setDate(columns[2])
-                .setConfirmedCases(Integer.parseInt(columns[30]))
-                .setDeaths(Integer.parseInt(columns[31]))
-                .setStringencyActual(Double.parseDouble(columns[32]))
-                .setStringency(Double.parseDouble(columns[33]))
-                .setStringencyLegacy(Double.parseDouble(columns[34]))
-                .setGovernmentResponseIndex(Double.parseDouble(columns[35]))
-                .setContainmentHealthIndex(Double.parseDouble(columns[37]))
-                .setEconomicSupportIndex(Double.parseDouble(columns[39]))
-                .build();
-
+                        .setCountryCode(columns[1])
+                        .setDate(columns[2])
+                        .setConfirmedCases(Integer.parseInt(columns[30]))
+                        .setDeaths(Integer.parseInt(columns[31]))
+                        .setStringencyActual(Double.parseDouble(columns[32]))
+                        .setStringency(Double.parseDouble(columns[33]))
+                        .setStringencyLegacy(Double.parseDouble(columns[34]))
+                        .setGovernmentResponseIndex(Double.parseDouble(columns[35]))
+                        .setContainmentHealthIndex(Double.parseDouble(columns[37]))
+                        .setEconomicSupportIndex(Double.parseDouble(columns[39]))
+                        .build();
 
 
     }
@@ -87,7 +85,9 @@ public class PipelineUtils {
 //        Scanner sc = new Scanner(new File("data/sample.jsonl"));
 //        String jsonString = sc.nextLine();
 //        TweetWritable tweet = parseJSONObjectFromString(jsonString);
-
+        String line1 = "United States,USA,20200712,,,,,,,,,,,,,,,,,,,,,,,,,,,,3247684,134814,,,,,,,,,,";
+        String line2 = "United States,USA,20200713,,,,,,,,,,,,,,,,,,,,,,,,,,,,3304942,135205,,68.98,,68.57,,68.91,,70.08,,62.50";
+        String line3 = "United States,USA,20200706,3.00,0,2.00,0,2.00,0,4.00,0,1.00,0,2.00,0,2.00,0,3.00,2.00,0,1.00,0.00,0.00,2.00,1,3.00,1.00,0.00,0.00,,2888635,129947,68.98,68.98,68.57,68.57,68.91,68.91,70.08,70.08,62.50,62.50";
     }
 
 }

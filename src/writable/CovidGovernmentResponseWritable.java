@@ -1,4 +1,4 @@
-package java.writable;
+package writable;
 
 import org.apache.hadoop.io.Writable;
 

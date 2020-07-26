@@ -1,4 +1,4 @@
-package java.writable;
+package writable;
 
 import org.apache.hadoop.io.Writable;
 
@@ -38,7 +38,12 @@ public class PoliciesWritable implements Writable {
     public PoliciesWritable() {
     }
 
-    public PoliciesWritable(int schoolClosing, int workPlaceClosing, int cancelPublicEvents, int restrictionsOnGatherings, int closePublicTransport, int stayAtHomeRequirments, int restrictionsOnInternalMovement, int internationalTravelControls, int incomeSupport, int debtRelief, int fiscalMeasures, int internationalSupport, int publicInfoCampaigns, int testingPolicy, int contactTracing, int emergencyInvestmentInHealthcare, int investmentInVaccines, String wildardPolicies) {
+    public PoliciesWritable(int schoolClosing, int workPlaceClosing, int cancelPublicEvents,
+                            int restrictionsOnGatherings, int closePublicTransport, int stayAtHomeRequirments,
+                            int restrictionsOnInternalMovement, int internationalTravelControls, int incomeSupport,
+                            int debtRelief, int fiscalMeasures, int internationalSupport, int publicInfoCampaigns,
+                            int testingPolicy, int contactTracing, int emergencyInvestmentInHealthcare,
+                            int investmentInVaccines, String wildardPolicies) {
         this.schoolClosing = schoolClosing;
         this.workPlaceClosing = workPlaceClosing;
         this.cancelPublicEvents = cancelPublicEvents;

@@ -1,19 +1,17 @@
-package java;
-
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
-import java.writable.CreatedAtWritable;
-import java.writable.TweetWritable;
+import writable.CreatedAtWritable;
+import writable.TweetWritable;
 
 public class PipelineMain {
     static final String INPUT_TWEETS_FILE_PATH = "covid/data/coronavirus-through-09-June-2020-00.jsonl";
     static final String OUTPUT_TWEETS_FILE_PATH = "covid/out/";
     static final String INPUT_ANNOTATION_FILE_PATH = OUTPUT_TWEETS_FILE_PATH;
-    static final String OUTPUT_ANNOTATION_FILE_PATH = "covid/annotation/out"
+    static final String OUTPUT_ANNOTATION_FILE_PATH = "covid/annotation/out";
 
 
     public static void main(String[] args) throws Exception {

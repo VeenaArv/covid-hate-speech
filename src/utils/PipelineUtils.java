@@ -1,13 +1,15 @@
-package java.utils;
+package utils;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.writable.CovidGovernmentResponseWritable;
-import java.writable.PoliciesWritable;
-import java.writable.TweetWritable;
+import java.util.Scanner;
+import writable.CovidGovernmentResponseWritable;
+import writable.PoliciesWritable;
+import writable.TweetWritable;
 
 
 public class PipelineUtils {
@@ -20,14 +22,16 @@ public class PipelineUtils {
     public static TweetWritable parseJSONTweetObjectFromString(String jsonString) throws ParseException {
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = (JSONObject) parser.parse(jsonString);
-        // System.out.println(jsonObject.toJSONString());
+         System.out.println(jsonObject.toJSONString());
         JSONObject entitiesJsonObject = (JSONObject) jsonObject.get("entities");
+        JSONObject userJsonObject = (JSONObject) jsonObject.get("user");
         JSONObject placeJsonObject = (JSONObject) jsonObject.get("place");
         String hashtags = entitiesJsonObject == null || entitiesJsonObject.get("hashtags") == null
                 ? null : entitiesJsonObject.get("hashtags").toString();
+        String userLocation = userJsonObject == null ? null : userJsonObject.get("location").toString();
         String place = placeJsonObject == null ? null : placeJsonObject.get("country_code").toString();
-        return new TweetWritable((Long) jsonObject.get("id"), (String) jsonObject.get("full_text"), hashtags, place,
-                (String) jsonObject.get("created_at"), (Boolean) jsonObject.get("truncated"));
+        return new TweetWritable((Long) jsonObject.get("id"), (String) jsonObject.get("full_text"), hashtags,
+                userLocation, place, (String) jsonObject.get("created_at"), (Boolean) jsonObject.get("truncated"));
     }
 
     private static int parseDecimalStringAsInt(String decimal) {
@@ -82,9 +86,11 @@ public class PipelineUtils {
 
 
     public static void main(String[] args) throws FileNotFoundException, ParseException {
-//        Scanner sc = new Scanner(new File("data/sample.jsonl"));
-//        String jsonString = sc.nextLine();
-//        TweetWritable tweet = parseJSONObjectFromString(jsonString);
+        Scanner sc = new Scanner(new File("data/sample.jsonl"));
+        String jsonString = sc.nextLine();
+        TweetWritable tweet = parseJSONTweetObjectFromString(jsonString);
+        System.out.println(tweet.userLocation);
+        System.out.println(tweet.state);
         String line1 = "United States,USA,20200712,,,,,,,,,,,,,,,,,,,,,,,,,,,,3247684,134814,,,,,,,,,,";
         String line2 = "United States,USA,20200713,,,,,,,,,,,,,,,,,,,,,,,,,,,,3304942,135205,,68.98,,68.57,,68.91,,70.08,,62.50";
         String line3 = "United States,USA,20200706,3.00,0,2.00,0,2.00,0,4.00,0,1.00,0,2.00,0,2.00,0,3.00,2.00,0,1.00,0.00,0.00,2.00,1,3.00,1.00,0.00,0.00,,2888635,129947,68.98,68.98,68.57,68.57,68.91,68.91,70.08,70.08,62.50,62.50";

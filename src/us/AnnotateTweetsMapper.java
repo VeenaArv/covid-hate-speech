@@ -1,10 +1,12 @@
+package us;
+
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
-import utils.NLPUtils;
-import writable.AnnotatedTweetWritable;
-import writable.CreatedAtWritable;
-import writable.TweetWritable;
+import us.utils.NLPUtils;
+import us.writable.AnnotatedTweetWritable;
+import us.writable.CreatedAtWritable;
+import us.writable.TweetWritable;
 
 public class AnnotateTweetsMapper
         extends Mapper<CreatedAtWritable, TweetWritable, CreatedAtWritable, AnnotatedTweetWritable> {

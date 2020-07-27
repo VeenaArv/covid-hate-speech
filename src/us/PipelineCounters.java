@@ -1,3 +1,5 @@
+package us;
+
 public class PipelineCounters {
     enum TweetPipeline {
         JSON_PARSE_EXCEPTION,

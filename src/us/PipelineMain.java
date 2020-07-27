@@ -1,11 +1,13 @@
+package us;
+
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
-import writable.CreatedAtWritable;
-import writable.TweetWritable;
+import us.writable.CreatedAtWritable;
+import us.writable.TweetWritable;
 
 public class PipelineMain {
     static final String INPUT_TWEETS_FILE_PATH = "covid/data/coronavirus-through-09-June-2020-00.jsonl";
@@ -44,6 +46,11 @@ public class PipelineMain {
         annotateTweets.setMapOutputKeyClass(CreatedAtWritable.class);
         annotateTweets.setMapOutputValueClass(TweetWritable.class);
         // TODO(veenaarv): Add reducer class to rank tweets per day and choose top N tweets
+
+    }
+
+    public static void runExtractCovidGovernmentResponse() throws IOException {
+        Job extractCovidGovernmentResponse = Job.getInstance();
 
     }
 

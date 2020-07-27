@@ -1,4 +1,4 @@
-package writable;
+package us.writable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

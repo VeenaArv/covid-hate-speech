@@ -1,4 +1,4 @@
-package writable;
+package us.writable;
 
 import org.apache.hadoop.io.WritableComparable;
 
@@ -13,8 +13,12 @@ public class AnnotatedTweetWritable implements WritableComparable<AnnotatedTweet
 
     public TweetWritable tweet;
     // Obtained from CoreNLP SentimentAnnotator.
-    public int sentimentScore;
-    public double sentimentProbability;
+    public int avgSentimentScore;
+    public double avgSentimentProbability;
+    // Strategy to determine sentiment by using the most negative sentiment. Filter sentences with neutral sentiment
+    // may inflate value
+    public int minSentimentScore;
+    public double minSentimentProbability;
 
     public AnnotatedTweetWritable(){/*Default constructor for serialization. Do not instantiate.*/}
 
@@ -25,15 +29,19 @@ public class AnnotatedTweetWritable implements WritableComparable<AnnotatedTweet
     @Override
     public void write(DataOutput out) throws IOException {
         tweet.write(out);
-        out.write(sentimentScore);
-        out.writeDouble(sentimentProbability);
+        out.write(avgSentimentScore);
+        out.writeDouble(avgSentimentProbability);
+        out.write(minSentimentScore);
+        out.writeDouble(minSentimentProbability);
     }
 
     @Override
     public void readFields(DataInput in) throws IOException {
         tweet.readFields(in);
-        sentimentScore = in.readInt();
-        sentimentProbability = in.readInt();
+        avgSentimentScore = in.readInt();
+        avgSentimentProbability = in.readDouble();
+        minSentimentScore = in.readInt();
+        minSentimentProbability = in.readDouble();
     }
 
     @Override
@@ -43,8 +51,8 @@ public class AnnotatedTweetWritable implements WritableComparable<AnnotatedTweet
 
     public Double confidenceScore() {
         // With 0 being neutral.
-        int normalizedSentimentScore = sentimentScore - 2;
-        return sentimentProbability * normalizedSentimentScore * -1;
+        int normalizedSentimentScore = avgSentimentScore - 2;
+        return avgSentimentProbability * normalizedSentimentScore * -1;
     }
 
     public SentimentClass toSentimentClass(int sentimentScore) {

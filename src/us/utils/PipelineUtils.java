@@ -1,4 +1,4 @@
-package utils;
+package us.utils;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -7,9 +7,9 @@ import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import writable.CovidGovernmentResponseWritable;
-import writable.PoliciesWritable;
-import writable.TweetWritable;
+import us.writable.CovidGovernmentResponseWritable;
+import us.writable.PoliciesWritable;
+import us.writable.TweetWritable;
 
 
 public class PipelineUtils {

@@ -1,8 +1,10 @@
+package us;
+
 import org.apache.hadoop.mapreduce.Reducer;
 
 import java.io.IOException;
-import writable.CreatedAtWritable;
-import writable.TweetWritable;
+import us.writable.CreatedAtWritable;
+import us.writable.TweetWritable;
 
 public class RemoveDuplicatesReducer extends Reducer<TweetWritable, TweetWritable, CreatedAtWritable, TweetWritable> {
     @Override

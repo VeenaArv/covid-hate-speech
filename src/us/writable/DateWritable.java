@@ -1,4 +1,4 @@
-package writable;
+package us.writable;
 
 import org.apache.hadoop.io.WritableComparable;
 

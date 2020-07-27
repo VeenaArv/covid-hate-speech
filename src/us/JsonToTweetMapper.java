@@ -1,11 +1,13 @@
+package us;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.json.simple.parser.ParseException;
-import utils.PipelineUtils;
-import writable.TweetWritable;
+import us.utils.PipelineUtils;
+import us.writable.TweetWritable;
 
 import java.io.IOException;
 

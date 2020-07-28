@@ -15,7 +15,7 @@ import java.io.IOException;
 public class AnnotatedTweetToParquetMapper extends Mapper<CreatedAtWritable, AnnotatedTweetWritable, Void, GenericRecord> {
 
     public static void main(String[] args) throws Exception {
-        Schema MAPPING_SCHEMA = new Schema.Parser().parse(new File("C:\\Users\\veena\\covid-hate-speech\\covid-hate-speech\\schema\\annotated_tweet_schema.jsonl"));
+        Schema MAPPING_SCHEMA = new Schema.Parser().parse(new File("annotated_tweet_schema.jsonl"));
         CreatedAtWritable key = new CreatedAtWritable("Wed Oct 10 20:19:24 +0000 2018");
         AnnotatedTweetWritable value = new AnnotatedTweetWritable(new TweetWritable(10l, "this is end", "", "USA", "", "", false));
         value.minSentimentProbability = .5;
@@ -50,6 +50,7 @@ public class AnnotatedTweetToParquetMapper extends Mapper<CreatedAtWritable, Ann
         record.put("min_sentiment_score", value.minSentimentScore);
         record.put("min_sentiment_class", AnnotatedTweetWritable.toSentimentClass(value.minSentimentScore));
         record.put("min_sentiment_prob", value.minSentimentProbability);
+        context.getCounter(PipelineCounters.writeToParquet.NUM_TWEETS_PROCESSED).increment(1);
         context.write(null, record);
     }
 }

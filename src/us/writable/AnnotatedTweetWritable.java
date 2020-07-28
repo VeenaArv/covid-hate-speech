@@ -65,6 +65,8 @@ public class AnnotatedTweetWritable implements WritableComparable<AnnotatedTweet
                 return SentimentClass.NEUTRAL;
             case 3:
                 return SentimentClass.POSITIVE;
+            case 4:
+                return SentimentClass.VERY_POSITIVE;
             default:
                 break;
         }
@@ -76,6 +78,7 @@ public class AnnotatedTweetWritable implements WritableComparable<AnnotatedTweet
         NEGATIVE,
         NEUTRAL,
         POSITIVE,
+        VERY_POSITIVE,
         UNKNOWN
     }
 

@@ -24,12 +24,12 @@ public abstract class DateWritable implements WritableComparable<DateWritable> {
 
     @Override
     public void write(DataOutput out) throws IOException {
-        out.writeChars(date);
+        out.writeUTF(date);
     }
 
     @Override
     public void readFields(DataInput in) throws IOException {
-        date = in.readLine();
+        date = in.readUTF();
     }
 
     @Override

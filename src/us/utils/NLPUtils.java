@@ -6,13 +6,16 @@ import edu.stanford.nlp.pipeline.*;
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
+import us.PipelineCounters;
 import us.writable.AnnotatedTweetWritable;
 import us.writable.TweetWritable;
+import org.apache.hadoop.mapreduce.Mapper;
+
 
 
 import java.util.Properties;
 public class NLPUtils {
-    public static void populateSentiment(AnnotatedTweetWritable annotatedTweet) {
+    public static void populateSentiment(AnnotatedTweetWritable annotatedTweet, Mapper.Context context) {
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize, ssplit, pos, parse, sentiment");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
@@ -36,6 +39,10 @@ public class NLPUtils {
             // min strategy.
             minSentimentScore = Integer.min(minSentimentScore, sentiment);
             minSentimentProb = Double.min(minSentimentProb, sentimentProb);
+            // increment counters
+            if (sentimentProb == 0) {
+                context.getCounter(PipelineCounters.annotateTweets.NUM_ZERO_PROBABILITY).increment(1);
+            }
         }
         annotatedTweet.avgSentimentScore = (int) Math.round(sentimentScoreSum /numSentences);
         annotatedTweet.avgSentimentProbability = sentimentProbSum / numSentences;
@@ -45,12 +52,12 @@ public class NLPUtils {
 
     public static void main(String[] args) {
 
-        String text = "Covid19 destroyed my life. The United States sucks.";
-        AnnotatedTweetWritable tweet = new AnnotatedTweetWritable(
-                new TweetWritable(0l, text, "","","","", false));
-        populateSentiment(tweet);
-        System.out.println(tweet.avgSentimentScore);
-        System.out.println(tweet.avgSentimentProbability);
+//        String text = "Covid19 destroyed my life. The United States sucks.";
+//        AnnotatedTweetWritable tweet = new AnnotatedTweetWritable(
+//                new TweetWritable(0l, text, "","","","", false));
+//        populateSentiment(tweet);
+//        System.out.println(tweet.avgSentimentScore);
+//        System.out.println(tweet.avgSentimentProbability);
 
     }
 }

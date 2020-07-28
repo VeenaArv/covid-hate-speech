@@ -35,6 +35,10 @@ public class TweetWritable implements WritableComparable<TweetWritable> {
         this.createdAt = createdAt;
         this.isTruncated = isTruncated;
         isEligibleForAnalysis = isEligibleForAnalysis();
+        // replace null values with null string.
+        if (this.countryCode == null) { this.countryCode = "NULL"; }
+        if (this.userLocation == null) {this.userLocation = "NULL"; }
+        if (this.state == null) {this.state = "NULL";}
         preprocessedText = preprocessTextForNLP();
     }
 

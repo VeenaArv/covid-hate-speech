@@ -1,11 +1,16 @@
 package us;
 
+import org.apache.avro.Schema;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import java.io.File;
 import java.io.IOException;
+
+import org.apache.parquet.avro.AvroParquetOutputFormat;
+import org.apache.parquet.example.data.Group;
 import us.writable.CreatedAtWritable;
 import us.writable.TweetWritable;
 
@@ -14,11 +19,15 @@ public class PipelineMain {
     static final String OUTPUT_TWEETS_FILE_PATH = "covid/out/";
     static final String INPUT_ANNOTATION_FILE_PATH = OUTPUT_TWEETS_FILE_PATH;
     static final String OUTPUT_ANNOTATION_FILE_PATH = "covid/annotation/out";
+    static final String OUTPUT_PARQUET_FILE_PATH = "covid/parquet/tweets/out";
 
 
     public static void main(String[] args) throws Exception {
-        System.exit(runExtractTweets() ? 0 : 1);
-
+        boolean status = true;
+        status &= runExtractTweets();
+        status &= runAnnotateTweets();
+        status &= runWriteTweetsToParquetFile();
+        System.exit(status ? 0 : 1);
     }
 
     public static boolean runExtractTweets() throws Exception {
@@ -37,21 +46,31 @@ public class PipelineMain {
         return extractTweets.waitForCompletion(true);
     }
 
-    public static void runAnnotateTweets() throws IOException {
+    public static boolean runAnnotateTweets() throws Exception {
         Job annotateTweets = Job.getInstance();
         annotateTweets.setJarByClass(AnnotateTweetsMapper.class);
         annotateTweets.setJobName("Annotate Tweets");
-        FileInputFormat.addInputPath(annotateTweets, new Path((INPUT_ANNOTATION_FILE_PATH)));
+        FileInputFormat.addInputPath(annotateTweets, new Path(INPUT_ANNOTATION_FILE_PATH));
         FileOutputFormat.setOutputPath(annotateTweets, new Path(OUTPUT_ANNOTATION_FILE_PATH));
         annotateTweets.setMapOutputKeyClass(CreatedAtWritable.class);
         annotateTweets.setMapOutputValueClass(TweetWritable.class);
+        return annotateTweets.waitForCompletion(true);
         // TODO(veenaarv): Add reducer class to rank tweets per day and choose top N tweets
 
     }
 
-    public static void runExtractCovidGovernmentResponse() throws IOException {
-        Job extractCovidGovernmentResponse = Job.getInstance();
-
+    public static boolean runWriteTweetsToParquetFile() throws Exception {
+        Job writeTweetsToParquetFile = Job.getInstance();
+        writeTweetsToParquetFile.setJarByClass(AnnotatedTweetToParquetMapper.class);
+        writeTweetsToParquetFile.setJobName("WriteToParquet");
+        FileInputFormat.addInputPath(writeTweetsToParquetFile, new Path(OUTPUT_ANNOTATION_FILE_PATH));
+        FileOutputFormat.setOutputPath(writeTweetsToParquetFile, new Path(OUTPUT_PARQUET_FILE_PATH));
+        writeTweetsToParquetFile.setOutputKeyClass(Void.class);
+        writeTweetsToParquetFile.setOutputValueClass(Group.class);
+        writeTweetsToParquetFile.setOutputFormatClass(AvroParquetOutputFormat.class);
+        Schema schema = new Schema.Parser().parse(new File("C:\\Users\\veena\\covid-hate-speech\\covid-hate-speech\\schema\\annotated_tweet_schema.jsonl"));
+        AvroParquetOutputFormat.setSchema(writeTweetsToParquetFile,schema);
+        return writeTweetsToParquetFile.waitForCompletion(true);
     }
 
 }

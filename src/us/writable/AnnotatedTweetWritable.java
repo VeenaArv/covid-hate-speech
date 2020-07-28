@@ -55,7 +55,7 @@ public class AnnotatedTweetWritable implements WritableComparable<AnnotatedTweet
         return avgSentimentProbability * normalizedSentimentScore * -1;
     }
 
-    public SentimentClass toSentimentClass(int sentimentScore) {
+    public static SentimentClass toSentimentClass(int sentimentScore) {
         switch (sentimentScore) {
             case 0:
                 return SentimentClass.VERY_NEGATIVE;

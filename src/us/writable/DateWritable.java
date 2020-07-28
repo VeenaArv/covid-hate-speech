@@ -13,7 +13,14 @@ public abstract class DateWritable implements WritableComparable<DateWritable> {
     /**
      * Creates a calendar object to compare dates.
      */
-    abstract Calendar parseDateStringToCalendar();
+    public abstract Calendar toCalendar();
+
+    /**
+     * Coverts to int readable by avro date logical type
+     * A date logical type annotates an Avro int, where the int stores the number of days from the unix epoch,
+     * 1 January 1970 (ISO calendar).
+     */
+    public abstract long toAvroDate();
 
     @Override
     public void write(DataOutput out) throws IOException {
@@ -27,6 +34,6 @@ public abstract class DateWritable implements WritableComparable<DateWritable> {
 
     @Override
     public int compareTo(DateWritable o) {
-        return this.parseDateStringToCalendar().compareTo(o.parseDateStringToCalendar());
+        return this.toCalendar().compareTo(o.toCalendar());
     }
 }

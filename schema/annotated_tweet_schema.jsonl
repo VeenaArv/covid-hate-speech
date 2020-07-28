@@ -1,0 +1,67 @@
+{
+  "type": "record",
+  "name": "AnnotatedTweets",
+  "fields": [
+    {
+      "name": "created_date",
+      "type": {
+        "type": "int",
+        "logicalType": "date"
+      }
+    },
+    {
+      "name": "raw_text",
+      "type": "string"
+    },
+    {
+      "name": "user_location",
+      "type": "string"
+    },
+    {
+      "name": "us_state",
+      "type": "string"
+    },
+    {
+      "name": "avg_sentiment_score",
+      "type": "int"
+    },
+    {
+      "name": "avg_sentiment_class",
+      "type": {
+        "name": "AvgSentimentClass",
+        "type": "enum",
+        "symbols": [
+          "VERY_NEGATIVE",
+          "NEGATIVE",
+          "NEUTRAL",
+          "POSITIVE"
+        ]
+      }
+    },
+    {
+      "name": "avg_sentiment_prob",
+      "type": "double"
+    },
+    {
+      "name": "min_sentiment_score",
+      "type": "int"
+    },
+    {
+      "name": "min_sentiment_class",
+      "type": {
+        "name": "MinSentimentClass",
+        "type": "enum",
+        "symbols": [
+          "VERY_NEGATIVE",
+          "NEGATIVE",
+          "NEUTRAL",
+          "POSITIVE"
+        ]
+      }
+    },
+    {
+      "name": "min_sentiment_prob",
+      "type": "double"
+    }
+  ]
+}

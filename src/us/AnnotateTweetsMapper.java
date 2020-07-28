@@ -28,28 +28,38 @@ public class AnnotateTweetsMapper
         switch (annotatedTweetWritable.avgSentimentScore) {
             case 0:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_AVG_VERY_NEGATIVE).increment(1);
+                break;
             case 1:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_AVG_NEGATIVE).increment(1);
+                break;
             case 2:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_AVG_NEUTRAL).increment(1);
+                break;
             case 3:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_AVG_POSITIVE).increment(1);
+                break;
             case 4:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_AVG_VERY_POSITIVE).increment(1);
+                break;
             default:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_AVG_UNKNOWN).increment(1);
         }
         switch (annotatedTweetWritable.minSentimentScore) {
             case 0:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_MIN_VERY_NEGATIVE).increment(1);
+                break;
             case 1:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_MIN_NEGATIVE).increment(1);
+                break;
             case 2:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_MIN_NEUTRAL).increment(1);
+                break;
             case 3:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_MIN_POSITIVE).increment(1);
+                break;
             case 4:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_MIN_VERY_POSITIVE).increment(1);
+                break;
             default:
                 context.getCounter(PipelineCounters.annotateTweets.NUM_MIN_UNKNOWN).increment(1);
         }

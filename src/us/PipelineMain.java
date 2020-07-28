@@ -57,6 +57,7 @@ public class PipelineMain {
         annotateTweets.setJobName("Annotate Tweets");
 
         annotateTweets.setMapperClass(AnnotateTweetsMapper.class);
+        annotateTweets.setNumReduceTasks(0);
 
         annotateTweets.setOutputKeyClass(CreatedAtWritable.class);
         annotateTweets.setOutputValueClass(AnnotatedTweetWritable.class);
@@ -78,6 +79,7 @@ public class PipelineMain {
         writeTweetsToParquetFile.setJobName("WriteToParquet");
 
         writeTweetsToParquetFile.setMapperClass(AnnotatedTweetToParquetMapper.class);
+        writeTweetsToParquetFile.setNumReduceTasks(0);
 
         writeTweetsToParquetFile.setOutputKeyClass(Void.class);
         writeTweetsToParquetFile.setOutputValueClass(Group.class);

@@ -12,11 +12,6 @@ See `schema/annotated_tweet_schema.jsonl`
 CREATE EXTERNAL TABLE twitter_data LIKE PARQUET 'covid/parquet/tweets/out/*'
   STORED AS PARQUET
   LOCATION 'covid/parquet/tweets/out';
-
-NUM_DUPLICATE_TWEETS	0	22	22
-NUM_OUTPUTS_JSON_TO_TWEET_MAPPER	296443	0	296443
-NUM_TWEETS_ELIGIBLE_FOR_ANALYSIS	0	296421	296421
-NUM_TWEETS_PROCESSED	1974940	0	1974940
 ```
 
 ### Sentiment scores grouped by day

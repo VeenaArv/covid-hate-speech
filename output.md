@@ -9,9 +9,9 @@ See `schema/annotated_tweet_schema.jsonl`
 ### To tell impala to read from parquet file format:
 
 ```
-CREATE EXTERNAL TABLE twitter_data LIKE PARQUET 'covid/parquet/tweets/out/*'
+CREATE EXTERNAL TABLE twitter_data LIKE PARQUET '/user/<username>/covid/parquet/tweets/out/part-m-00000.parquetcovid/parquet/tweets/out/part-m-00000.parquet'
   STORED AS PARQUET
-  LOCATION 'covid/parquet/tweets/out';
+  LOCATION '/user/<username>/covid/parquet/tweets/out';
 ```
 
 ### Sentiment scores grouped by day
@@ -28,5 +28,3 @@ SELECT created_date,
 FROM
    twitter_data GROUP BY created_date, order by created_date;
 ```
-
->>>>>>> Stashed changes

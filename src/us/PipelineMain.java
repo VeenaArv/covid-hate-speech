@@ -15,7 +15,7 @@ import us.writable.TweetWritable;
 import java.io.File;
 
 public class PipelineMain {
-    static final String INPUT_TWEETS_FILE_PATH = "covid/data/coronavirus-through-09-June-2020-00.jsonl";
+    static final String INPUT_TWEETS_FILE_PATH = "covid/data/sample.jsonl";
     static final String OUTPUT_TWEETS_FILE_PATH = "covid/out/";
     static final String INPUT_ANNOTATION_FILE_PATH = OUTPUT_TWEETS_FILE_PATH;
     static final String OUTPUT_ANNOTATION_FILE_PATH = "covid/annotation/out2";
@@ -52,8 +52,8 @@ public class PipelineMain {
 
     public static boolean runAnnotateTweets() throws Exception {
         Job annotateTweets = Job.getInstance();
-        annotateTweets.addFileToClassPath(new Path("stanford-corenlp-4.0.0.jar"));
-        annotateTweets.addFileToClassPath(new Path("stanford-corenlp-4.0.0-models.jar"));
+        annotateTweets.addFileToClassPath(new Path("lib/stanford-corenlp-4.0.0.jar"));
+        annotateTweets.addFileToClassPath(new Path("lib/stanford-corenlp-4.0.0-models.jar"));
         annotateTweets.addFileToClassPath(new Path("lib/ejml-simple-0.38.jar"));
         annotateTweets.addFileToClassPath(new Path("lib/ejml-core-0.38.jar"));
         annotateTweets.addFileToClassPath(new Path("lib/ejml-ddense-0.38.jar"));
@@ -79,11 +79,11 @@ public class PipelineMain {
 
     public static boolean runWriteTweetsToParquetFile() throws Exception {
         Job writeTweetsToParquetFile = Job.getInstance();
-        writeTweetsToParquetFile.addFileToClassPath(new Path("parquet-hadoop-bundle-1.9.0.jar"));
-        writeTweetsToParquetFile.addFileToClassPath(new Path("parquet-hadoop-1.9.0.jar"));
-        writeTweetsToParquetFile.addFileToClassPath(new Path("parquet-format-2.3.1.jar"));
-        writeTweetsToParquetFile.addFileToClassPath(new Path("parquet-avro-1.9.0.jar"));
-        writeTweetsToParquetFile.addFileToClassPath(new Path("avro-1.8.0.jar"));
+        writeTweetsToParquetFile.addFileToClassPath(new Path("lib/parquet-hadoop-bundle-1.9.0.jar"));
+        writeTweetsToParquetFile.addFileToClassPath(new Path("lib/parquet-hadoop-1.9.0.jar"));
+        writeTweetsToParquetFile.addFileToClassPath(new Path("lib/parquet-format-2.3.1.jar"));
+        writeTweetsToParquetFile.addFileToClassPath(new Path("lib/parquet-avro-1.9.0.jar"));
+        writeTweetsToParquetFile.addFileToClassPath(new Path("lib/avro-1.8.0.jar"));
         writeTweetsToParquetFile.setJarByClass(AnnotatedTweetToParquetMapper.class);
         writeTweetsToParquetFile.setJobName("WriteToParquet");
 

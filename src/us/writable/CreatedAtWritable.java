@@ -1,10 +1,10 @@
 package us.writable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
+import java.util.*;
 
 public class CreatedAtWritable extends DateWritable {
 
@@ -54,5 +54,26 @@ public class CreatedAtWritable extends DateWritable {
         LocalDate epoch = LocalDate.ofEpochDay(0);
         LocalDate date = LocalDate.of(year, month, day);
         return ChronoUnit.DAYS.between(epoch, date);
+    }
+
+    public String toISODate() {
+        ArrayList<String> MONTH_CODE_TO_INT = new ArrayList<>(
+                Arrays.asList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"));
+        // ex. "created_at": "Wed Oct 10 20:19:24 +0000 2018"
+        String[] splitDate = date.split(" ");
+        int year = Integer.parseInt(splitDate[splitDate.length - 1]);
+        // From 1 (January) to 12 (December)
+        int month = MONTH_CODE_TO_INT.indexOf(splitDate[1]);
+        int day = Integer.parseInt(splitDate[2]);
+
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
+        df.setTimeZone(tz);
+        String iso = df.format(new Date(year, month, day));
+        return iso;
+    }
+
+    public String getMonth() {
+        return date.split(" ")[1];
     }
 }

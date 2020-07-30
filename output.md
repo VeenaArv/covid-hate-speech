@@ -29,3 +29,4 @@ FROM
    twitter_data GROUP BY created_date, order by created_date;
 ```
 
+>>>>>>> Stashed changes

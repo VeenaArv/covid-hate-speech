@@ -50,16 +50,16 @@ public class NLPUtils {
         annotatedTweet.minSentimentProbability = minSentimentProb;
     }
 
-    public static void main(String[] args) {
-
+//    public static void main(String[] args) {
+//
 //        String text = "Covid19 destroyed my life. The United States sucks.";
 //        AnnotatedTweetWritable tweet = new AnnotatedTweetWritable(
 //                new TweetWritable(0l, text, "","","","", false));
 //        populateSentiment(tweet);
 //        System.out.println(tweet.avgSentimentScore);
 //        System.out.println(tweet.avgSentimentProbability);
-
-    }
+//
+//    }
 }
 
 

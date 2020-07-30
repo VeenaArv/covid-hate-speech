@@ -23,7 +23,7 @@ public class AnnotatedTweetToParquetMapper extends Mapper<CreatedAtWritable, Ann
         value.avgSentimentProbability = .75;
         value.avgSentimentScore = 3;
         GenericData.Record record = new GenericData.Record(MAPPING_SCHEMA);
-        record.put("created_date", key.toAvroDate());
+        record.put("created_date", key.toISODate());
         record.put("raw_text", value.tweet.rawText);
         record.put("user_location", value.tweet.userLocation);
         record.put("us_state", value.tweet.state);
@@ -38,19 +38,21 @@ public class AnnotatedTweetToParquetMapper extends Mapper<CreatedAtWritable, Ann
 
     @Override
     protected void map(CreatedAtWritable key, AnnotatedTweetWritable value, Context context) throws IOException, InterruptedException {
-        Schema schema = new Schema.Parser().parse(new File("C:\\Users\\veena\\covid-hate-speech\\covid-hate-speech\\schema\\annotated_tweet_schema.jsonl"));
+        Schema schema = new Schema.Parser().parse(new File("annotated_tweet_schema.jsonl"));
         GenericData.Record record = new GenericData.Record(schema);
-        record.put("created_date", key.toAvroDate());
-        record.put("raw_text", value.tweet.rawText);
-        record.put("user_location", value.tweet.userLocation);
-        record.put("us_state", value.tweet.state);
-        record.put("avg_sentiment_score", value.avgSentimentScore);
-        record.put("avg_sentiment_class", AnnotatedTweetWritable.toSentimentClass(value.avgSentimentScore));
-        record.put("avg_sentiment_prob", value.avgSentimentProbability);
-        record.put("min_sentiment_score", value.minSentimentScore);
-        record.put("min_sentiment_class", AnnotatedTweetWritable.toSentimentClass(value.minSentimentScore));
-        record.put("min_sentiment_prob", value.minSentimentProbability);
-        context.getCounter(PipelineCounters.writeToParquet.NUM_TWEETS_PROCESSED).increment(1);
-        context.write(null, record);
+        if (value.tweet != null) {
+            record.put("created_date", key.toISODate());
+            record.put("raw_text", value.tweet.rawText);
+            record.put("user_location", value.tweet.userLocation);
+            record.put("us_state", value.tweet.state);
+            record.put("avg_sentiment_score", value.avgSentimentScore);
+            record.put("avg_sentiment_class", AnnotatedTweetWritable.toSentimentClass(value.avgSentimentScore));
+            record.put("avg_sentiment_prob", value.avgSentimentProbability);
+            record.put("min_sentiment_score", value.minSentimentScore);
+            record.put("min_sentiment_class", AnnotatedTweetWritable.toSentimentClass(value.minSentimentScore));
+            record.put("min_sentiment_prob", value.minSentimentProbability);
+            context.getCounter(PipelineCounters.writeToParquet.NUM_TWEETS_PROCESSED).increment(1);
+            context.write(null, record);
+        }
     }
 }
